@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>test</h1>
+<div class="mylist"></div>
+<input type="text" class="content" />
+<input type="button" class="btnAdd" value="Add" />
+<input type="button" class="btnAdd2" value="Add2" />
+<input type="button" class="btnShow" value="Show" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+
+$(document).ready(function() {
+	$.get("http://127.0.0.1:3000/ajax")
+	.done(displayTable)
+	.fail(function() {
+		alert( "error" );
+	});
+
+	$(".btnAdd").click(function() {
+		$.post("http://127.0.0.1:3000/ajax", {
+			content:$(".content").val(), 
+			action:'add_product' 
+		})
+		.done(displayTable)
+		.fail(function() {
+			alert( "error" );
+		});
+	});
+	$(".btnAdd2").click(function() {
+		$.post("http://127.0.0.1:3000/add", {
+			todo:{
+				title:$(".content").val(), 
+				created:Date.now
+			}
+		})
+		.done(displayTable)
+		.fail(function() {
+			alert( "error" );
+		});
+	});
+	$(".btnShow").click(function() {
+		$.post("http://127.0.0.1:3000/show", {
+			todo:{
+				title:$(".content").val(), 
+				created:Date.now
+			}
+		})
+		.done(displayTable2)
+		.fail(function() {
+			alert( "error" );
+		});
+	});
+});
+
+function displayTable2(data) {
+	if(data.length===0) return;
+	var html = '<ul>';
+	for(var i2 in data){
+		html += '<li><ul>';
+		for(var i in i2){
+			html += '<li>'+data[i]+'</li>';
+		}
+		html += '</ul></li>';
+	}
+	html += '</ul>';
+	$(".mylist").html(html);
+}
+
+function displayTable(data) {
+	if(data.length===0) return;
+	var html = '<ul>';
+	for(var i in data){
+		html += '<li>'+data[i]+'</li>';
+	}
+	html += '</ul>';
+	$(".mylist").html(html);
+}
+
+
+</script>
+
+
+</body>
+</html>
+
