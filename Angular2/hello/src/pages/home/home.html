@@ -1,0 +1,93 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle icon-only>
+      <ion-icon name='menu'></ion-icon>
+    </button>
+    <ion-title>
+      Friends
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-menu [content]="content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Pages</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list>
+      <button ion-item (click)="openPage(PageOne)">
+        Login
+      </button>
+      <button ion-item (click)="openPage(PageTwo)">
+        Signup
+      </button>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+<ion-nav id="nav" #content [root]="rootPage"></ion-nav>
+
+<ion-content>
+
+
+
+<button ion-button block menuToggle>Toggle Menu</button>
+
+
+  <ion-card>
+
+    <ion-card-content>
+      <h2 class="card-title">
+        Björk
+      </h2>
+      <p>
+        Björk first came to prominence as one of the lead vocalists of the avant pop Icelandic sextet the Sugarcubes, but when...
+      </p>
+    </ion-card-content>
+
+    <ion-item>
+      <ion-icon name='musical-notes' item-left style="color: #d03e84"></ion-icon>
+      Albums
+      <ion-badge item-right>9</ion-badge>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name='logo-twitter' item-left style="color: #55acee"></ion-icon>
+      Followers
+      <ion-badge item-right>260k</ion-badge>
+    </ion-item>
+
+  </ion-card>
+
+<ion-list radio-group>
+  <ion-list-header>
+    Language
+  </ion-list-header>
+
+  <ion-item>
+    <ion-label>Go</ion-label>
+    <ion-radio checked="true" value="go"></ion-radio>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Rust</ion-label>
+    <ion-radio value="rust"></ion-radio>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Python</ion-label>
+    <ion-radio value="python" disabled="true"></ion-radio>
+  </ion-item>
+</ion-list>
+
+</ion-content>
+
+
+
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-title>Footer</ion-title>
+  </ion-toolbar>
+</ion-footer>

@@ -1,0 +1,45 @@
+<!--
+  Generated template for the Places page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <header-content title="Places"></header-content>
+
+</ion-header>
+
+
+<ion-content padding>
+
+  <ion-item *ngFor="let d of data">
+    <ion-avatar style="float:left;padding-right:20px;">
+      <img src="{{d.image}}">
+    </ion-avatar>
+    <h2>{{d.name}}</h2>
+    <p>{{d.description}}</p>
+  </ion-item>
+
+
+
+<!--
+id:0
+description:"Cool place to see with great robots inside."
+image: "http://lorempicsum.com/futurama/100/100/1"
+name:"Amsterdam"
+position.lat:"52.3702157"
+position.long:"4.895167899999933"
+
+  <ion-chip *ngFor="let d of data">
+    <ion-avatar>
+      <img src="{{d.image}}">
+    </ion-avatar>
+    <ion-label>{{d.name}}</ion-label>
+  </ion-chip>
+
+-->
+
+
+
+</ion-content>
