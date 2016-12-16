@@ -1,0 +1,524 @@
+IONIC & CORDOVA
+===============
+
+(pour la culture:
+	famo.us
+	onsen UI
+)
+
+
+ionic view -> c'est une application à télécharger qui va nous permettre de tester notre application directement sur le téléphone
+
+ionic lab -> pour build une interface avec des drag&drop
+
+Webpack -> outil de build, prend notre code et le package en un seul fichier pour délivrer dans le navigateur
+
+Apache Cordova -> pour build une application avec un code HTML, CSS et JS
+
+Sass -> un compilateur de CSS (sass utilise "Ruby" pour compiler) 
+
+______________
+
+c koi?
+<input (input)=" name = 1234 " />
+______________
+
+// Ceci 
+<p *mavar="uneexpression"></p>
+
+// Devient
+<template [mavar]="uneexpression">
+	<p></p>
+</template>
+
+______________
+
+installation
+
+
+npm install  -g cordova
+npm install  -g ionic
+npm install // finir avec ça
+
+// après on peut faire 
+ionic serve
+
+// Pour compiler pour une platform
+cordova platform add ios 
+cordova platform add android
+cordova platform add wp8
+
+// Pour compiler pour une platform
+ionic platform add ios
+ionic platform add android
+ionic platform add wp8
+
+
+ionic build android
+ionic emulate android
+ionic run android
+
+ionic help 
+
+// pour lancer l'application
+ionic serve
+
+ionic start hello blank --v2 // le v2 signifie qu'on utilise ionic v2
+
+
+// Pour voir les différences entre les versions 
+
+// [SOLUTION]
+// http://...?ionicplatform=ios
+// http://...?ionicplatform=android
+// http://...?ionicplatform=wp8
+
+//ou
+ionic serve --lab
+//ou
+ionic serve --help // permet de comparer l'affichage entre les différents OS(mobile)
+
+
+
+
+(dans le chemin root on peut specifier des customisations en fonction de la platforme )
+
+
+
+
+
+
+// ==============
+
+Les dossiers:
+hooks (pour GIT, sert aux linters, etc.)
+platform // se créer par cordova lors de la compilateur
+plugin idem que platform
+ressources // utilisé par cordova
+src // Notre application
+
+src/index.html -> build/main.css, build/main.js
+
+
+//=======================
+
+scffolding -> mettre un component dans un autre
+
+<ion-app> // application
+	<ion-nav> // navigation principale
+	<ion-content> // le contenu
+	<ion-toolbar> // header et footer
+	<ion-nav-bar> // (permet de mettre un titre en haut et un bouton en bas)
+	<ion-buttons> // mettre un bouton
+
+
+
+//=======================
+
+ionic generate --list
+
+Angular
+->component
+->directives
+->pipe
+->provider
+
+Ionic
+->page
+->tabs
+
+[TABS]
+ionic g tabs myTabs
+-> ensuite il demande combien de tabs on veut et les noms
+/*
+places 
+add 
+around
+friends
+*/
+ionic g component MyComponent
+
+
+
+//=======================
+
+NAVIGATION
+
+Navigation Stack
+On push ou on Pop (page suivante, page précédante)
+
+// Next page
+this.nav.push(maPage);
+
+// Prev page
+this.nav.pop();
+
+// Définit la page d'acueil
+this.nav.setRoot(maPage);
+
+
+Deeplinker 
+-> // pour résoudre le problème quand on rafraichi la page ailleur que sur la home
+-> // DeeplinkerConfig
+
+
+//=======================
+
+
+Prochain projet pour s'amuser
+IONIC Places 
+
+
+ionic start myprojet tabs --lab
+et une autre commande que j'ai raté
+
+//=======================
+
+
+[GIT]
+git clone https://github.com/kimak/ionic2-places
+
+git remote add myprojet http://github.com/moncompte/... -> pour un fork me
+(git push -> // pour envoyer nos modifications)
+
+ionic serve
+
+git ls-files -> // pour lister les fichiers modifiés
+
+Le fork me -> //C'est la création d'un nouveau repository sur la base d'un autre repository
+
+
+git pull request -> // pour dupliquer le projet et travailler sur un autre projet
+git merge -> // pour fusionner ensuite les deux projets
+//ou
+git push -> // pour fusionner ensuite les deux projets
+// ou si github
+pull request -> // soumettre les modifications avant qu'elles soient mergés
+
+une branche -> // c'est un ensemble de commit
+
+on peut merger dans tous les sens
+
+head -> // c'est le plus récent
+
+fetch_head -> // pour prendre le dernier commit sur le serveur même si on a fait des modifs
+
+stash -> // c'est une zone temporaire locale dans lequel on peut faire un "stash pop"
+
+
+git --reset --hard HEAD  -> // Créer une branche nikel du dernier commit
+
+git status -> // Affiche les fichiers qui sont modifiés
+git checkout -b mystep1 -> // Pour annuler 
+
+// Simulation d'un commit
+git add . -> // Commit tous les fichiers qui ont été modifiés
+git st -> // affiche le staging
+git commit -m "mystep1" -> // on commit
+git remote -v -> // pour voir le nom qu'on a donné à la branche (dont les fork)
+git push lenombranche mystep1 -> // on push sur le serveur
+
+git pull origin -> // pour prendre la dernière version
+git push origin master -> // pour commiter la dernière version
+git remote add myprojet http://github.com/moncompte/... -> pour un fork me
+
+
+//=======================
+
+[BUGS]
+Si on a un bug sur l'import, peut-être remplacer le dernier dossier page "pages"
+Exemple:
+import { Friends } from '../friends/friends'
+devient
+import { Friends } from '../friends/pages'
+
+
+import { Places } from '../places/pages'
+devient
+import { PlacesPages } from '../places/pages'
+
+
+[BUG]
+-No component factory found for PlacesPage
+Ajoute dans app.module.ts la classe PlacesPage
+
+-Pour résoudre le bug sur map.ts, ajouter:
+import {  } from '@types/google-maps';
+
+-Pour résoudre le problème de compilation pour IOS
+
+npm install -g cordova
+npm install -g ios-sim
+npm install -g ios-deploy
+
+DEVOIRS
+components / header-content / 
+
+
+// SIDE MENU
+
+// *************************************************************
+// *************************************************************
+
+[MODALE]
+
+<button full ion-button (click)="signupModal()">Sign in</button>
+
+// =====================================
+
+
+import { Component } from '@angular/core';
+import { NavController, ModalController, NavParams } from 'ionic-angular';
+import { Routes } from '../../app/app.routes';
+
+/*
+  Generated class for the Login page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+*/
+@Component({
+  selector: 'page-login',
+  templateUrl: 'login.html',
+})
+export class LoginPage {
+
+  constructor(public navCtrl: NavController, public modalCtrl: ModalController) {}
+
+  signupModal(){
+    let profileModal = this.modalCtrl.create(Routes.getPage(Routes.SIGNUP), { userId: 8675309 });
+    profileModal.present();
+  }
+
+
+
+}
+
+// *************************************************************
+// *************************************************************
+
+[Authentification login signup avec JWT]
+
+https://auth0.com/blog/ionic-2-authentication-how-to-secure-your-mobile-app-with-jwt/
+npm install angular2-jwt
+
+
+http://jwt.io
+
+http://github.com/kimak/nodejs-jwt-authentication-sample
+
+Pour installer le module
+npm install angular2-jwt --save
+
+ionic g provider endpoint 
+
+voir ici la comparaison de branches pour voir ce qui a du être codé
+https://github.com/kimak/ionic2-places/compare/step5...step6
+
+
+
+
+	
+// *************************************************************
+// *************************************************************
+[MAP]
+	install du @type/google-map
+	
+	npm install --save @types/google-maps
+	
+	
+	
+	ajouter dans index.html le javascript 
+	<script src="http://"></script>
+	
+	
+	ionViewDidEnter() // methode qui se lance lorsque les enfants d'une page sont totalement chargés
+	ionViewDidLoad() // méthode qui se lance 
+	
+	https://github.com/kimak/ionic2-places/compare/step9...step10
+	
+	http://www.joshmorony.com/ionic-2-how-to-use-google-maps-geolocation-video-tutorial/
+	
+Pour résoudre le bug sur map.ts, ajouter:
+import {  } from '@types/google-maps';
+		
+// *************************************************************
+// *************************************************************
+[MOBILE]
+ionic upload
+
+[ionic ACCOUNT]
+
+name: ddee
+username: eedd
+company: dede
+mail: ddee@protonmail.com
+0908070605ionic
+
+
+
+ionic build
+installer ionic native
+
+	
+// *************************************************************
+// *************************************************************
+[CONTACTS]
+http://ionicframework.com/docs/v2/native/contacts/
+
+ionic plugin add cordova-plugin-contacts
+
+import { Contacts } from 'ionic-native';
+
+//ensuite
+Contacts.find(['*']).then((contacts) => {
+	contacts.forEach( (c) => {
+		if(c.name.givenName && c.phoneNumbers) {
+			this.contactsfound.push({name: c.name.givenName, phone: c.phoneNumbers[0].value});
+		}
+	});
+}, (error) => {
+	alert("error "+error);
+}).catch((error)=> {
+	alert("catch "+error);
+})
+
+
+
+	
+// *************************************************************
+// *************************************************************
+
+Pour build
+sous mac -> xcode + simulateur IOS
+
+Windows, Mac, Linux -> SDK android
+
+Windows phone -> Visual Studio
+
+
+Pour nous on va utiliser:
+Android Studio
+
+GENYMOTION
+
+cordova build android
+cordova run android
+
+
+//=============================
+//=============================
+[Mon projet]
+npm install -g angular-cli
+ng new monprojet
+npm install --save @angular/material
+
+	Qui donne:
+	error : MSB3411 : Impossible de charger le composant Visual C++ "VCBuild.exe". Si le composant n'est pas installé, vous devez 
+	1) installer le Kit de développement Microsoft Windows SDK pour Windows Server 2008 et .NET Framework 2.0 3.5, 
+	ou 2) installer Visual Studio 2008.
+
+	installe visual studio 2013
+	
+	
+	Pas résolut avec:
+	https://www.microsoft.com/en-us/download/details.aspx?id=11310
+
+	Peut-être résolut avec:
+	-Install free Visual Studio Express 2013 for Windows
+	 https://www.microsoft.com/en-US/download/details.aspx?id=44914
+	
+	et
+	npm install --msvs_version=2013
+	ou
+	npm config --global set msvs_version 2013
+	
+	solution trouvé là	http://stackoverflow.com/questions/18608928/error-msb3411-could-not-l-oad-the-visual-c-component-vcbuild-exe
+	
+		https://github.com/nodejs/node-gyp/wiki/Visual-Studio-2010-Setup
+		
+		
+	NOTE 
+	Pour gérer les fichiers voir le fichier suivant
+	C:\aShare\aProgrammation\Angular\ionic\prof\TestAvecMobile\step11\node_modules\tsickle\test\test_support.ts
+	
+==========================================================
+
+Cours de Nico fazio
+ 
+github de fazionico GErecycle
+declare var Google;
+
+
+
+mean stack -> mango, express, angular
+faudra dire tous les composants qu'on voudra intégrer
+"use case"
+les classes
+BDD Modèle
+
+
+======================================================
+
+[MATERIAL DESIGN]
+
+http://www.materialui.co/colors
+http://www.materialpalette.com
+
+z-depth (de 1 à 5?) -> pour les ombres
+
+vimeo.com/128637726
+vimeo.com/128637728
+
+dp = (largeur (px)  *  160) / densité d'écran
+
+
+http://www.typegenius.com -> combinaison de police
+
+http://www.materialup.com/posts/japanese-bangumi-app
+
+http://www.fontpair.co
+
+
+[OUTILS DE DESIGN]
+sketch
+illustrator
+vectr.com
+pencil.evolus.vn
+garvit.io
+
+[]
+
+//////////////////////////////////////////////////////////////////
+			START PROJECT
+//////////////////////////////////////////////////////////////////
+
+
+[Pour ajouter une page]
+	eteindre le serveur
+	A la racine du projet:
+	ionic g page nomdepage
+
+	Ensuite ouvrir
+	app.module.ts
+		import { Page3 } from '../pages/page3/page3';
+		rajouter dans declarations et entryComponents: [...,Page3]
+		
+	app.component.ts
+		import { Page3 } from '../pages/page3/page3';
+		this.nav.setRoot(Page3); // Première page au lancement
+	relancer le serveur "ionic serve"
+	
+
+[Pour ajouter un composant]
+A la racine du projet:
+ionic g component nomducomposant
+
+
+
+[Pour ajouter un provider (une classe)]
+A la racine du projet:
+ionic g provider nomdeclass
+
+
+
