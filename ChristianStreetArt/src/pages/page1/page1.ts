@@ -89,10 +89,11 @@ export class Page1 {
 	});
 	var map = new ol.Map({
 		// Full screen
-		controls : ol.control.defaults().extend([ new ol.control.FullScreen() ]),
+		//controls : ol.control.defaults().extend([ new ol.control.FullScreen() ]),
 		//interactions : ol.interaction.defaults({doubleClickZoom :false}),
 		//layers: [this.layerBing, this.layerGeoserver],
-		layers: [this.layerBing, this.layerOriginal],
+		//layers: [this.layerBing, this.layerOriginal],
+		layers: [this.layerOriginal],
 		target: 'map2',
 		view: this.olView
 	});
