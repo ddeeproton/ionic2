@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 import { NavController } from 'ionic-angular';
 import  ol  from 'openlayers';
-import * as $ from 'jquery';
+//import * as $ from 'jquery';
 
 
 @Component({
@@ -92,8 +92,8 @@ export class Page1 {
 		//controls : ol.control.defaults().extend([ new ol.control.FullScreen() ]),
 		//interactions : ol.interaction.defaults({doubleClickZoom :false}),
 		//layers: [this.layerBing, this.layerGeoserver],
-		//layers: [this.layerBing, this.layerOriginal],
-		layers: [this.layerOriginal],
+		layers: [this.layerBing, this.layerOriginal],
+		//layers: [this.layerOriginal],
 		target: 'map2',
 		view: this.olView
 	});
