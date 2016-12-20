@@ -1,0 +1,29 @@
+[MATERIAL DESIGN]
+
+http://www.materialui.co/colors
+http://www.materialpalette.com
+
+z-depth (de 1 à 5?) -> pour les ombres
+
+vimeo.com/128637726
+vimeo.com/128637728
+
+dp = (largeur (px)  *  160) / densité d'écran
+
+
+http://www.typegenius.com -> combinaison de police
+
+http://www.materialup.com/posts/japanese-bangumi-app
+
+http://www.fontpair.co
+
+
+[OUTILS DE DESIGN]
+sketch
+illustrator
+vectr.com
+pencil.evolus.vn
+garvit.io
+
+[]
+

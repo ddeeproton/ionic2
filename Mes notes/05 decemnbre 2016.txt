@@ -1,0 +1,1473 @@
+github de fazionico GErecycle
+
+
+
+[IONIC]
+https://github.com/rajayogan/ionic2-flashlight
+http://blog.ionic.io/crosswalk-comes-to-ionic/
+http://www.gajotres.net/building-a-native-mobile-app-with-cordova-and-ionic/2/
+
+[NODE SERVER]
+node en ligne -> voir mongolab
+
+https://docs.nodejitsu.com/articles/file-system/
+https://nodejs.org/api/http.html
+http://expressjs.com/en/guide/routing.html
+https://github.com/jeremythille/cours_nodejs
+https://docs.google.com/presentation/d/1wKr_M9QGROQiNLV05ugykYbpjgYxGwdhiC5fbj-KpUk/edit
+https://www.heroku.com -> // hosting
+https://app.keymetrics.io
+
+http://blog.ionic.io/crosswalk-comes-to-ionic/ -> pour faire un build
+http://www.gajotres.net/building-a-native-mobile-app-with-cordova-and-ionic/
+
+
+npm install nodemon -g // -g indique qu'on veut l'installer partout
+
+ensuite on peut lancer les scripts avec <<nodemon monscript.js>>
+
+
+node myserver.js
+node-debug myserver.js -> installer d'abord un truc
+//=====================
+var http = require('http');
+
+var server = http.createServer(function(req, res) {
+  res.writeHead(200);
+  res.end('Hello, world!');
+});
+
+server.listen(80, '111.111.111.111');
+
+//=====================
+
+fs.readFile()
+//=====================
+
+
+fs = require('fs')
+fs.readFile('/etc/hosts', 'utf8', function (err,data) {
+  if (err) {
+    return console.log(err);
+  }
+  console.log(data);
+});
+
+// ====
+
+Pour faire le routing
+https://www.npmjs.com/package/express
+npm install express
+
+
+/* npm install body-parser --save */
+//
+var express = require('express')
+var app = express()
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/index.html')
+})
+app.get('/home', function (req, res) {
+  res.send('Coucou World')
+})
+app.post('/home', function (req, res) {
+  res.send('Coucou World')
+})
+app.get('*', function (req, res) {
+  res.send('Page not found :)')
+});
+app.post('*', function (req, res) {
+  res.send('Page not found :)')
+});
+app.listen(3000)
+// ou avec express
+app.route('/login')
+.get((req,res)=>{
+	res.send('Page login')
+})
+.post((req,res)=>{
+	res.send('login request')
+})
+
+// On peut aussi envoyer des tableau (converti automatiquement en json)
+	// SERVER
+	app.post('/ajax', function (req, res) {
+		//res.send('ajax works')
+		//res.send(__dirname)
+		res.status(200).send(['item1','item2','item3']);
+		//res.json(['item1','item2','item3']); // json() pareil que send()
+		//res.sendFile(__dirname + '/data.json')
+	})
+		
+	// CLIENT
+	$(document).ready(function() {
+		$.post("http://127.0.0.1:3000/ajax", {
+			myvarname1:1, 
+			myvarname2:'add_product' 
+		})
+		.done(function( data ) {
+			if(data.length===0) return;
+			let html = '<ul>';
+			for(let d of data){
+				html += '<li>'+d+'</li>';
+			}
+			html += '</ul>';
+			$(".mylist").html(html);
+		})
+		.fail(function() {
+			alert( "error" );
+		})
+		.always(function() {
+			//alert( "finished" );
+		});
+	});	
+//===============================
+[serveur node js avec mongoose]
+var express = require('express')
+var app = express()
+
+// get variables
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({extended:true}));
+
+
+// Mongoose
+const mongoose = require('mongoose');
+const todoSchema = mongoose.Schema({
+	title:{
+		type : String,
+		default : "Mon titre"
+},
+	created: {
+		 type: Date,
+			"default": Date.now
+	}
+});
+
+mongoose.connect('mongodb://localhost/todolist', function(err) {
+  if (err) {return console.error("Error connecting to MongoDB!");}
+});
+
+
+app.post('/add', function (req, res) {
+	const Todo = mongoose.model('todo', todoSchema); // Todo est un modèle Mongoose
+	const todo = new Todo(req.body.todo);
+	todo.save( (err, docInserted) => {
+		if (err) return res.status(500).json({ error: err })
+		return res.status(200).json(docInserted);
+	});
+
+})
+app.post('/show', function (req, res) {
+	const Todo = mongoose.model('todo', todoSchema); // Todo est un modèle Mongoose
+	Todo.find((err, docInserted) => {
+		if (err) return res.status(500).json({ error: err })
+		return res.status(200).json(docInserted);
+	});
+	/*
+	const todo = new Todo(req.body.todo);
+	todo.save( (err, docInserted) => {
+		if (err) return res.status(500).json({ error: err })
+		return res.status(200).json(docInserted);
+	});
+	*/
+
+})
+
+app.post('/show', (req, res, next) => { 
+	// middle ware,
+	// si tests ok, alors on passe à la suite
+	next(); 
+}, 
+(req, res) => {
+  res.send('Coucou World')
+});
+	
+
+var myData = ['item1','item2','item3'];
+
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/index.html')
+})
+
+app.get('/home', function (req, res) {
+  res.send('Coucou World')
+})
+
+app.get('/ajax', function (req, res) {
+  res.status(200).send(myData);
+})
+
+app.post('/ajax', function (req, res) {
+	console.log(req.body.content);
+	myData.push(req.body.content);
+	res.status(200).send(myData);
+	//res.status(200).end();
+	//res.send('ajax works')
+	//res.send(__dirname)
+	//res.json(['item1','item2','item3']); // json() pareil que send()
+	//res.sendFile(__dirname + '/data.json')
+})
+
+
+app.get('*', function (req, res) {
+  res.send('Page not found :)')
+});
+app.post('*', function (req, res) {
+  res.send('Page not found :) (post)')
+});
+app.listen(3000)
+
+//===============================
+		
+
+// package.json
+npm init
+creer package.json et c'est là qu'on va ajouter les modules
+
+npm install express --save // si on rajoute --save ça va rajouter dans package.json le module
+npm i //ensuite il suffira de lancer la commande suivante pour que node installe toutes les dépendances indiqués dans package.json
+
+//===============================
+
+__dirname // retourne le chemin courrant
+ou
+app.use(express.static(__dirname)); // alors plus besoin d'indiquer __dirname
+
+
+
+//===============================
+
+// Pour lire une variable POST sur le serveur
+npm install body-parser
+
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({extended:true}); 
+app.post('/users', (req,res)=>{
+	console.log(req.body.user);
+	res.status(200).end();
+})
+
+
+///=====
+
+créer un index.html
+avec du jquery qui va chercher du contenu
+
+//===============================
+
+
+var router = express.Router();
+
+router.param('user_id', function(req, res, next, id) {
+  // sample user, would actually fetch from DB, etc...
+  req.user = {
+    id: id,
+    name: 'TJ'
+  };
+  next();
+});
+
+router.route('/users/:user_id')
+.all(function(req, res, next) {
+  // runs for all HTTP verbs first
+  // think of it as route specific middleware!
+  next();
+})
+.get(function(req, res, next) {
+  res.json(req.user);
+})
+.put(function(req, res, next) {
+  // just an example of maybe updating the user
+  req.user.name = req.params.name;
+  // save user ... etc
+  res.json(req.user);
+})
+.post(function(req, res, next) {
+  next(new Error('not implemented'));
+})
+.delete(function(req, res, next) {
+  next(new Error('not implemented'));
+});
+
+
+//===============================
+
+
+winscp -> ssh
+
+
+www.heroku.com -> // hosting
+
+[PM2]
+comme nodemon mais adapté pour côté serveur
+npm install pm2 -g
+pm2 start monserveur.js
+pm2 list -> voir les listes et récupérer le numeroID
+pm2 stop 0
+pm2 stop [numeroID]
+
+https://app.keymetrics.io
+
+pm2 permet aussi le support du cluster (load balancing) afin d'utiliser plusieurs serveurs node (donc de le rendre multithread)
+// exemple pour deux coeurs
+pm2 start monserveur.js -i 2
+// exemple pour le maximum de coeurs
+pm2 start monserveur.js -i max
+
+//^=================
+[BUGS]
+Error occurred during initialization of VM Could not reserve enough space for 2097152KB object heap
+
+Dans les variables d'environnement, rajouter ceci:
+_JAVA_OPTIONS: -Xmx1024m
+
+GRADLE_OPTS
+-Dorg.gradle.jvmargs=-Xmx512m
+
+
+
+//^=================
+
+librairie Q -> Pour résoudre les massives callback
+
+
+
+// =====
+côté serveur, on peut recevoir un id (code à vérifier)
+ 
+app.delete('/data/:id', function (req, res) {
+	var id = req.params.id;
+})
+ 
+ 
+// ==================
+[Les imports]
+//Pour exporter
+module.exports = {
+	uneVariableExportable
+}
+ 
+ // Pour importer 
+const uneVariableExportable = require('monfichier.js')
+
+[Autre méthode d'import]
+
+//Pour exporter
+module.exports = {
+	uneVariableExportable,
+	mavar2
+}
+ 
+ // Pour importer 
+const uneVariableExportable = require('monfichier.js').uneVariableExportable;
+const mavar2 = require('monfichier.js').mavar2;
+
+//=====
+npm install --save-dev // pour mettre des composants uniquement en dev
+npm install --production // pour mettre des composants uniquement en production
+
+ng build --watch // c koi?
+
+npm install ionic-native --save
+
+ionic build android --release
+
+// TEST UNITAIRE
+npm install --save-dev mocha chai// pour mettre des composants TESTUNITAIRE uniquement en dev
+
+Créer un dossier ./test
+Mocha va automatiquement rechercher dans ce dossier (nom générique) et exécuter nos tests.
+Créer un fichier ./test/spec.js et dedans faire les tests 
+
+
+Dans package.json, ajouter le script suivant :
+"scripts" : {
+	…
+	"mocha-test" : "mocha"
+	…
+}
+Pour exécuter le test, il suffit de faire : npm run mocha-test
+
+//====================================
+[script serveur NODE]
+
+var express = require('express')
+var app = express()
+
+// get variables
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({extended:true}));
+
+
+
+var myData = ['item1','item2','item3'];
+
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/index.html')
+})
+
+app.get('/home', function (req, res) {
+  res.send('Coucou World')
+})
+
+app.get('/ajax', function (req, res) {
+  res.status(200).send(myData);
+})
+
+app.post('/ajax', function (req, res) {
+	console.log(req.body.content);
+	myData.push(req.body.content);
+	res.status(200).send(myData);
+	//res.status(200).end();
+	//res.send('ajax works')
+	//res.send(__dirname)
+	//res.json(['item1','item2','item3']); // json() pareil que send()
+	//res.sendFile(__dirname + '/data.json')
+})
+app.get('*', function (req, res) {
+  res.send('Page not found :)')
+});
+app.post('*', function (req, res) {
+  res.send('Page not found :) (post)')
+});
+app.listen(3000)
+
+//====================================
+suite [script serveur NODE][index.html]
+<!DOCTYPE html>
+<html>
+<body>
+<h1>test</h1>
+
+<div class="mylist"></div>
+
+<input type="text" class="content" />
+<input type="button" class="btnAdd" value="Add" />
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+
+$(document).ready(function() {
+	$.get("http://127.0.0.1:3000/ajax")
+	.done(displayTable)
+	.fail(function() {
+		alert( "error" );
+	});
+
+	$(".btnAdd").click(function() {
+		$.post("http://127.0.0.1:3000/ajax", {
+			content:$(".content").val(), 
+			action:'add_product' 
+		})
+		.done(displayTable)
+		.fail(function() {
+			alert( "error" );
+		});
+	});
+});
+
+function displayTable(data) {
+	if(data.length===0) return;
+	var html = '<ul>';
+	for(var i in data){
+		html += '<li>'+data[i]+'</li>';
+	}
+	html += '</ul>';
+	$(".mylist").html(html);
+}
+
+
+</script>
+
+
+</body>
+</html>
+
+
+
+//====================================
+[MANGO DB]
+<INSTALLATION>
+https://www.mongodb.com/download-center#community
+
+télécharger la version 32bit
+mongodb-win32-i386-3.2.11-signed.msi
+
+et lancer comme ceci:
+mongod --storageEngine=mmapv1 --dbpath "C:\Share\mongodb"
+
+mangolab -> Un hébergeur gratuit
+
+
+robotmongo -> application pour explorer la base de donnée
+
+db.getCollection('macollection').stats() -> pour voir les statistiques de la table
+db.getCollection('macollection').find({}) -> pour afficher le contenu de la table
+db.getCollection('macollection').find({}).count() -> pour compter le nombre d'éléments dans la table
+db.getCollection('macollection').find({title:'montitre'}) -> pour afficher le contenu qui vaut title='montitre'
+db.getCollection('macollection').find({title: /montitre/}) -> pour afficher le contenu qui contient title='montitre' (regex)
+// OR
+db.getCollection('macollection').find({
+	$or : [
+		mavar: /test/i,
+		mavar2: /test/i
+	]
+})
+.sort('created')
+.sort('-created') // pour inverser on rajoute un "-"
+.limit(50)
+.start(50)
+.length(50)
+.exec()
+// AND
+db.getCollection('macollection').find({mavar: /test/i,mavar2: /test/i});
+
+mongoose api model -> npm install mongoose
+
+//====================================
+[connexion à MongoDB]
+<connexion>
+var MongoClient = require('mongodb').MongoClient;
+MongoClient.connect("mongodb://localhost:27017/exampleDb", (err, db) => {
+	if(err) return console.error(err);
+console.log("MongoDB is connected!")
+});
+
+//====================================
+[connexion à MongoDB]
+<insert>
+var MongoClient = require('mongodb').MongoClient;
+MongoClient.connect("mongodb://localhost:27017/exampleDb", (err, db) => {
+	if(err) return console.error(err);
+	console.log("MongoDB is connected!")
+	// création de la base de donnée test
+	db.createCollection('test', function(err, collection) {
+		// insertion se sa première donnée
+		collection.insert( { 'doc1' : 'Hello!' } );
+	});
+});
+//====================================
+[connexion à MongoDB]
+<insert+update>
+// Retrieve
+var MongoClient = require('mongodb').MongoClient;
+
+// Connect to the db
+MongoClient.connect("mongodb://localhost:27017/exampleDb", function(err, db) {
+  if(err) { return console.dir(err); }
+
+  var collection = db.collection('test');
+  var doc = {mykey:1, fieldtoupdate:1};
+
+  collection.insert(doc, {w:1}, function(err, result) {
+    collection.update({mykey:1}, {$set:{fieldtoupdate:2}}, {w:1}, function(err, result) {});
+  });
+
+  var doc2 = {mykey:2, docs:[{doc1:1}]};
+
+  collection.insert(doc2, {w:1}, function(err, result) {
+    collection.update({mykey:2}, {$push:{docs:{doc2:1}}}, {w:1}, function(err, result) {});
+  });
+});
+
+//====================================
+collection.update({mykey:1}, {$set:{fieldtoupdate:2}}, {w:1}, function(err, result) {});
+//--
+collection.update({mykey:2}, {$push:{docs:{doc2:1}}}, {w:1}, function(err, result) {});
+//--
+
+//====================================
+[connexion à MongoDB]
+<insert+remove>
+// Retrieve
+var MongoClient = require('mongodb').MongoClient;
+
+// Connect to the db
+MongoClient.connect("mongodb://localhost:27017/exampleDb", function(err, db) {
+  if(err) { return console.dir(err); }
+
+  var collection = db.collection('test');
+  var docs = [{mykey:1}, {mykey:2}, {mykey:3}];
+
+  collection.insert(docs, {w:1}, function(err, result) {
+    collection.remove({mykey:1});
+    collection.remove({mykey:2}, {w:1}, function(err, result) {});
+    collection.remove();
+  });
+});
+
+//====================================
+collection.remove({mykey:1});
+//--
+collection.remove({mykey:2}, {w:1}, function(err, result) {});
+
+//====================================
+// Retrieve
+var MongoClient = require('mongodb').MongoClient;
+
+// Connect to the db
+MongoClient.connect("mongodb://localhost:27017/exampleDb", function(err, db) {
+  if(err) { return console.dir(err); }
+
+  var collection = db.collection('test');
+  var docs = [{mykey:1}, {mykey:2}, {mykey:3}];
+
+  collection.insert(docs, {w:1}, function(err, result) {
+
+    collection.find().toArray(function(err, items) {});
+
+    var stream = collection.find({mykey:{$ne:2}}).stream();
+    stream.on("data", function(item) {});
+    stream.on("end", function() {});
+
+    collection.findOne({mykey:1}, function(err, item) {});
+
+  });
+});
+//====================================
+collection.find().toArray(function(err, items) {});
+//--
+var stream = collection.find({mykey:{$ne:2}}).stream();
+stream.on("data", function(item) {});
+stream.on("end", function() {});
+//--
+collection.findOne({mykey:1}, function(err, item) {});
+
+//====================================
+<Créaction d'index>
+db.collection.createIndex( <key and index type specification>, <options> )
+db.collection.createIndex(keys);
+db.collection.createIndex(keys, options); // options est optionnel
+db.collection.createIndex({"myId": -1}, options); //  -1 ou 1 signifie l'ordre d'affichage
+db.collection.createIndex( { <field>: < 1 or -1 > } )
+
+Parameter	Type	Description
+keys		
+A document that contains the field and value pairs where the field is the index key and the value describes the type of index for that field. For an ascending index on a field, specify a value of 1; for descending index, specify a value of -1.
+MongoDB supports several different index types including text, geospatial, and hashed indexes. See index types for more information.
+
+options	
+Optional. A document that contains a set of options that controls the creation of the index. See Options for details.
+
+//====================================
+[mongo.exe]
+https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/
+https://docs.mongodb.com/manual/core/index-multikey/
+
+> help
+        db.help()                    help on db methods
+        db.mycoll.help()             help on collection methods
+        sh.help()                    sharding helpers
+        rs.help()                    replica set helpers
+        help admin                   administrative help
+        help connect                 connecting to a db help
+        help keys                    key shortcuts
+        help misc                    misc things to know
+        help mr                      mapreduce
+
+        show dbs                     show database names
+        show collections             show collections in current database
+        show users                   show users in current database
+        show profile                 show most recent system.profile entries with time >= 1ms
+        show logs                    show the accessible logger names
+        show log [name]              prints out the last segment of log in memory, 'global' is default
+        use <db_name>                set current database
+        db.foo.find()                list objects in collection foo
+        db.foo.find( { a : 1 } )     list objects in foo where a == 1
+        it                           result of the last line evaluated; use to further iterate
+        DBQuery.shellBatchSize = x   set default number of items to display on shell
+        exit                         quit the mongo shell
+
+
+show dbs
+use todolist
+show collections
+db.mycoll.help()
+	DBCollection help
+        db.mycoll.find().help() - show DBCursor help
+        db.mycoll.bulkWrite( operations, <optional params> ) - bulk execute write operations, optional parameters are: w, wtimeout, j
+        db.mycoll.count( query = {}, <optional params> ) - count the number of documents that matches the query, optional parameters are: limit, skip, hint, maxTimeMS
+        db.mycoll.copyTo(newColl) - duplicates collection by copying all documents to newColl; no indexes are copied.
+        db.mycoll.convertToCapped(maxBytes) - calls {convertToCapped:'mycoll', size:maxBytes}} command
+        db.mycoll.createIndex(keypattern[,options])
+        db.mycoll.createIndexes([keypatterns], <options>)
+        db.mycoll.dataSize()
+        db.mycoll.deleteOne( filter, <optional params> ) - delete first matching document, optional parameters are: w, wtimeout, j
+        db.mycoll.deleteMany( filter, <optional params> ) - delete all matching documents, optional parameters are: w, wtimeout, j
+        db.mycoll.distinct( key, query, <optional params> ) - e.g. db.mycoll.distinct( 'x' ), optional parameters are: maxTimeMS
+        db.mycoll.drop() drop the collection
+        db.mycoll.dropIndex(index) - e.g. db.mycoll.dropIndex( "indexName" ) or db.mycoll.dropIndex( { "indexKey" : 1 } )
+        db.mycoll.dropIndexes()
+        db.mycoll.ensureIndex(keypattern[,options]) - DEPRECATED, use createIndex() instead
+        db.mycoll.explain().help() - show explain help
+        db.mycoll.reIndex()
+        db.mycoll.find([query],[fields]) - query is an optional query filter. fields is optional set of fields to return.
+                                                      e.g. db.mycoll.find( {x:77} , {name:1, x:1} )
+        db.mycoll.find(...).count()
+        db.mycoll.find(...).limit(n)
+        db.mycoll.find(...).skip(n)
+        db.mycoll.find(...).sort(...)
+        db.mycoll.findOne([query], [fields], [options], [readConcern])
+        db.mycoll.findOneAndDelete( filter, <optional params> ) - delete first matching document, optional parameters are: projection, sort, maxTimeMS
+        db.mycoll.findOneAndReplace( filter, replacement, <optional params> ) - replace first matching document, optional parameters are: projection, sort, maxTimeMS, upsert, returnNewDocument
+        db.mycoll.findOneAndUpdate( filter, update, <optional params> ) - update first matching document, optional parameters are: projection, sort, maxTimeMS, upsert, returnNewDocument
+        db.mycoll.getDB() get DB object associated with collection
+        db.mycoll.getPlanCache() get query plan cache associated with collection
+        db.mycoll.getIndexes()
+        db.mycoll.group( { key : ..., initial: ..., reduce : ...[, cond: ...] } )
+        db.mycoll.insert(obj)
+        db.mycoll.insertOne( obj, <optional params> ) - insert a document, optional parameters are: w, wtimeout, j
+        db.mycoll.insertMany( [objects], <optional params> ) - insert multiple documents, optional parameters are: w, wtimeout, j
+        db.mycoll.mapReduce( mapFunction , reduceFunction , <optional params> )
+        db.mycoll.aggregate( [pipeline], <optional params> ) - performs an aggregation on a collection; returns a cursor
+        db.mycoll.remove(query)
+        db.mycoll.replaceOne( filter, replacement, <optional params> ) - replace the first matching document, optional parameters are: upsert, w, wtimeout, j
+        db.mycoll.renameCollection( newName , <dropTarget> ) renames the collection.
+        db.mycoll.runCommand( name , <options> ) runs a db command with the given name where the first param is the collection name
+        db.mycoll.save(obj)
+        db.mycoll.stats({scale: N, indexDetails: true/false, indexDetailsKey: <index key>, indexDetailsName: <index name>})
+        db.mycoll.storageSize() - includes free space allocated to this collection
+        db.mycoll.totalIndexSize() - size in bytes of all the indexes
+        db.mycoll.totalSize() - storage allocated for all data and indexes
+        db.mycoll.update( query, object[, upsert_bool, multi_bool] ) - instead of two flags, you can pass an object with fields: upsert, multi
+        db.mycoll.updateOne( filter, update, <optional params> ) - update the first matching document, optional parameters are: upsert, w, wtimeout, j
+        db.mycoll.updateMany( filter, update, <optional params> ) - update all matching documents, optional parameters are: upsert, w, wtimeout, j
+        db.mycoll.validate( <full> ) - SLOW
+        db.mycoll.getShardVersion() - only for use with sharding
+        db.mycoll.getShardDistribution() - prints statistics about data distribution in the cluster
+        db.mycoll.getSplitKeysForChunks( <maxChunkSize> ) - calculates split points over all chunks and returns splitter function
+        db.mycoll.getWriteConcern() - returns the write concern used for any operations on this collection, inherited from server/db if set
+        db.mycoll.setWriteConcern( <write concern doc> ) - sets the write concern for writes to the collection
+        db.mycoll.unsetWriteConcern( <write concern doc> ) - unsets the write concern for writes to the collection
+>
+//====================================
+[Mongoose]
+http://mongoosejs.com/docs/models.html
+npm install mongoose
+
+<Ajout d'un Typage>
+
+const mongoose = require('mongoose');
+const todoSchema = mongoose.Schema({
+  title: String,
+  text:  {
+    type: string,
+    default: Date.now
+  },
+  created: {
+    type: Date,
+    "default": Date.now
+  }
+});
+const Todo = mongoose.model('todo', todoSchema); // Todo est un modèle Mongoose
+
+mongoose.connect('mongodb://localhost/todolist', function(err) {
+  if (err) {return console.error("Error connecting to MongoDB!");}
+});
+//====================================
+const todo = new Todo({
+	title : "some Title",
+	text : "Some text"
+})
+
+todo.save()
+Todo.findOne( { title : "chien" }, (err,doc) => {    });
+// find one iphone Todos - iphone Todos??
+Todo.findOne({ type: 'iphone' }, function (err, Todo) {});
+// same as above
+Todo.findOne({ type: 'iphone' }).exec(function (err, Todo) {});
+// select only the Todos name
+Todo.findOne({ type: 'iphone' }, 'name', function (err, Todo) {});
+// same as above
+Todo.findOne({ type: 'iphone' }, 'name').exec(function (err, Todo) {});
+// specify options, in this case lean
+Todo.findOne({ type: 'iphone' }, 'name', { lean: true }, callback);
+// same as above
+Todo.findOne({ type: 'iphone' }, 'name', { lean: true }).exec(callback);
+// chaining findOne queries (same as above)
+Todo.findOne({ type: 'iphone' }).select('name').lean().exec(callback);
+
+Todo.findOneAndRemove( { title : "chien" }, (err,doc) => {    });
+
+Todo.findOneAndUpdate( { title : "chien" }, { text : "3 fois par jour" } ,(err,doc) => {    });
+Todo.findOneAndUpdate(conditions, update, options, callback) // executes
+Todo.findOneAndUpdate(conditions, update, options)  // returns Query
+Todo.findOneAndUpdate(conditions, update, callback) // executes
+Todo.findOneAndUpdate(conditions, update)           // returns Query
+Todo.findOneAndUpdate()      
+// Si on indique pas le callback dans findOneAndUpdate alors on peut faire le callback en rajoutant une fonction exec() après.
+Todo.findOneAndUpdate(conditions, update, options).exec(callback)
+Todo.findOneAndUpdate(conditions, update, options).exec((err,doc)=>{})
+Todo.findOneAndUpdate(conditions, update, options).sort("-date").limit(100).exec((err,doc)=>{});
+Todo.findOneAndUpdate(conditions, update, options).lean().exec((err,doc)=>{}); // lean transforme la variable doc (anciennement en objet mangoose, par un simple json, donc ducoup ça va beaucoup plus vite.
+ 
+// insert many 
+var arr = [{ name: 'Star Wars' }, { name: 'The Empire Strikes Back' }];
+Todo.insertMany(arr, function(error, docs) {});
+// findById
+Model.findById(id, function (err, doc) {
+  if (err) ..
+  doc.name = 'jason borne';
+  doc.save(callback);
+});
+//
+Todo.find( { title : "chien" },{ 
+	limit:10,
+	sort:{ created: -1 }
+}).exec(err,docs) => {
+	res.status(200).json(docs);
+});
+
+
+//====================================
+
+
+
+var schema = new Schema({
+  name:    String,
+  binary:  Buffer,
+  living:  Boolean,
+  updated: { type: Date, default: Date.now },
+  age:     { type: Number, min: 18, max: 65 },
+  mixed:   Schema.Types.Mixed,
+  _someId: Schema.Types.ObjectId,
+  array:      [],
+  ofString:   [String],
+  ofNumber:   [Number],
+  ofDates:    [Date],
+  ofBuffer:   [Buffer],
+  ofBoolean:  [Boolean],
+  ofMixed:    [Schema.Types.Mixed],
+  ofObjectId: [Schema.Types.ObjectId],
+  nested: {
+    stuff: { type: String, lowercase: true, trim: true }
+  }
+})
+
+// example use
+
+var Thing = mongoose.model('Thing', schema);
+
+var m = new Thing;
+m.name = 'Statue of Liberty';
+m.age = 125;
+m.updated = new Date;
+m.binary = new Buffer(0);
+m.living = false;
+m.mixed = { any: { thing: 'i want' } };
+m.markModified('mixed');
+m._someId = new mongoose.Types.ObjectId;
+m.array.push(1);
+m.ofString.push("strings!");
+m.ofNumber.unshift(1,2,3,4);
+m.ofDates.addToSet(new Date);
+m.ofBuffer.pop();
+m.ofMixed = [1, [], 'three', { four: 5 }];
+m.nested.stuff = 'good';
+m.save(callback);
+
+//====================================
+var schema1 = new Schema({
+  test: String // `test` is a path of type String
+});
+
+var schema2 = new Schema({
+  test: { type: String } // `test` is a path of type string
+});
+//====================================
+In addition to the type property, you can specify additional properties for a path. For example, if you want to lowercase a string before saving:
+
+var schema2 = new Schema({
+  test: {
+    type: String,
+    lowercase: true // Always convert `test` to lowercase
+  }
+});
+
+//====================================
+<api.add actuellement :>
+
+const add = (req,res) => {
+	let todo = req.body.todo;
+	todos.push(todo);
+	res.status(200).json(todo);
+}
+
+<A remplacer par :>
+
+const add = (req, res) => {
+const todo = new Todo(req.body.todo);
+todo.save( (err, docInserted) => {
+		if (err) return res.status(500).json({ error: err })
+		return res.status(200).json(docInserted);
+	});
+};
+
+//====================================
+[MANGO.exe]
+commande mongo.exe
+
+// selectionner une base 
+use dbname
+// sauvegarder une base
+mongodump -d dbname [-o folderdestination]
+// envoyer une base
+mongorestore -d filepath
+
+copier de serveur à server
+db.runCommand({cloneCollection: "dbname.collectionname", from: "192.168.0.11:3000"})
+
+//====================================
+[middleware]
+En rapport avec les routes. Va executer la fonction spécifié juste avant qu'on execute la fonction lié à la page (dit route).
+Si cette fonction middleware return vrai ou faux alors la page executera la fonction lié à la page
+Ainsi on peut mettre à cet endroit une fonction nommé auth afin d'authentifier l'utilisateur sur une page
+La fonction auth va prendre trois arguments (req, res, next). Il faudra appeller next à la fin de cette fonction auth si tout est ok.
+
+// Exemple 1
+const auth = (req, res, next) => { 
+	// ici le middle ware,
+	// si tests ok, alors on passe à la suite
+	next(); 
+}
+app.post('/show', auth, (req, res) => {
+  res.send('Coucou World')
+});
+// Exemple 2
+app.post('/show', (req, res, next) => { 
+	// ici le middle ware,
+	// si tests ok, alors on passe à la suite
+	next(); 
+}, 
+(req, res) => {
+  res.send('Coucou World')
+});
+
+//====================================
+[Authentification Google]
+Le client se connecte à Google et récupère son ID de google.
+Le client envoie l'idGoogle au serveur Node.
+Le serveur node envoie l'idGoogle reçu à Google et vérifie s'il existe.
+Enfin Google renvoie au serveur les informations de l'utilisateur
+
+Étape 1 : index.html - inclusion de la librairie Google+ API
+  <meta name="google-signin-client_id" content="xxxxx.apps.googleusercontent.com">
+  <meta name="google-signin-scope" content="profile email">
+  <script src="https://apis.google.com/js/platform.js"></script>
+
+Étape 2
+	Configurer un compte Google API : console.cloud.google.com pour obtenir le xxxxx
+	Sur le site http://console.cloud.google.com 
+	on doit créer le projet et récupérer le numéro qu'on rajoutera dans Etape 1
+	Sur le même site, aller sur API MANAGER -> Librairy -> Google+ 
+	Va nous amener sur Crédentials, et là on récupère l'IdGoogle
+	
+Étape 3 : Ajout du bouton :
+	<div id="signin"></div>
+
+Étape 4 : génération du bouton (automatiquement, par la librairie Google) (attaché à étape 3)
+	<script>
+		let id_token = null;
+		gapi.signin2.render('signin', {
+			'scope': 'profile email',
+			'onsuccess': (googleUser) => {
+				token = googleUser.getAuthResponse().id_token;
+			},
+			'onfailure': (error) => console.log(error)
+		});
+	</script>
+
+Étape 5 : création d’un petit serveur (pour servir index.html)
+	const express = require('express')
+	const app = express();
+	const port = 8080;
+	app.use(express.static(__dirname))
+	app.listen(port, () => {
+		console.log("App listening on port " + port)
+	})
+
+	
+Étape 6 :
+	Dans l’admin Google, autoriser :
+	localhost:8080 comme URL d’origine
+	localhost:8080/auth/google/callback comme URL de redirection
+	(Nécessite quelques minutes pour se propager et prendre effet)
+	Tester le bouton de login dans notre application.
+	Si tout va bien, Google devrait renvoyer un objet contenant, entre autres, un id_token.
+	
+	
+Étape 7 : envoyer le token_id au serveur pour authentification. On utilise jQuery pour ça
+	<button onClick="requestResource()">Get secret content</button>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+	requestResource = () => {
+		$.get( '/secret, { id_token: id_token})
+			.then((data) => {
+				console.log(data)
+			})
+			.catch((err) => console.error(err));
+	}
+
+Étape 8 : Créer une route sur le serveur, qui reçoit le token
+	app.get('/secret, (req,res) => authenticate(req,res) )
+
+
+Étape 9 : Créer la fonction qui va vérifier le token
+	const https = require('https');
+	const authenticate = (req, res) => {
+		console.log(req.query.token);
+		let rawData = '';
+		https.get('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + req.query.token, (stream) => {
+			stream
+				.on('data' , (chunk) => rawData += chunk )
+				.on('error', (e) =>  log("Got error: " + e.message) )
+				.on('end'  , () => {
+					let data = JSON.parse(rawData)
+					// … à finir
+				});
+		});
+	}
+
+	note: ici on utilise un stream, dont le principe est de recevoir des informations par petit bouts (un chunk) qu'il faudra ensuite rassembler.
+	
+	
+Étape 10 :
+	En réponse au token, Google renvoie un objet contenant les détails de l’utilisateur (suivant le scope autorisé).
+	Par exemple, ayant l’adresse email, on peut vérifier si cet utilisateur est autorisé à accéder à la ressource demandée.
+	Sur le serveur :
+
+	const admins = [ 'jeremy.thille@gmail.com' ]
+	stream.on('end'  , () => {
+		let data = JSON.parse(rawData)
+		if (admins.indexOf(data.email) > -1) {
+			res.status(200).send('Authorised! :)');
+		} else {
+			res.status(403).send('Unauthorized :(');
+		}
+	});
+
+Étape 11 : Un petit bouton/lien pour se déconnecter
+	HTML :
+		<a href="#" onclick="signOut();">Sign out</a>
+
+	JS : 
+		signOut = () => {
+			const auth2 = gapi.auth2.getAuthInstance();
+			auth2.signOut().then( () => {
+				id_token = null;
+				console.log('User signed out.');
+			});
+		}
+		
+Étape 12 :
+	$.get("http://127.0.0.1:3000/secret", {id_token:idGoogle})
+	.done(displayPage)
+	.fail(function() {
+		alert( "error" );
+	});
+//====================================
+[Authentification PassportJS avec des SESSIONS]
+	http://passportjs.org
+	npm install passportjs (à vérifier!)
+	npm install passport (ok)
+	npm install passport-local (ok)
+	npm install express-session (ok)
+
+	Utilisation de PassportJS et des Sessions
+
+	1. (client to server) Login + password
+	2. (server to client) Envoi d'un cookie (avec date d'expiration)
+	3. (client to server)  Demande de ressource + cookie
+	4. (server) Vérification du cookie
+	5. (server to client) Envoi de la ressource demandée
+
+Étape 1 : inclusion des modules requis et configuration
+
+	const bodyParser = require('body-parser');
+	const session = require('express-session');
+	const passport = require('passport'),
+	LocalStrategy = require('passport-local').Strategy;
+
+	app
+		.use(express.static(__dirname))
+		.use(bodyParser.urlencoded({ extended: false })) // <----- Required for Passport (but not mentioned in the docs)
+		.use(session({  // Enabling Express sessions via browser cookie
+			secret: '1234567890QWERTY'
+		}))
+		.use(passport.initialize()) // <---------------- Don't forget this!!
+		.use(passport.session()) // Place this AFTER express.use(session())
+		
+		
+Étape 2 : formulaire de login
+
+
+<form action="/login" method="post">
+	<div>
+		<label>Username:</label>
+		<input type="text" name="username" value="jer" />
+	</div>
+	<div>
+		<label>Password:</label>
+		<input type="password" name="password" value="toto"/>
+	</div>
+	<div>
+		<input type="submit" value="Submit" />
+	</div>
+</form>
+
+
+
+
+Étape 3 : réception des identifiants sur le serveur et utilisation de la stratégie 'local' de Passport
+
+
+	app.post('/login', passport.authenticate('local', {
+		successRedirect: '/secret',
+		failureRedirect: '/badLogin'
+	}));
+
+	
+Étape 4 : définition de la stratégie locale de Passport
+	passport.use(new LocalStrategy( // Reminder : LocalStrategy = require('passport-local').Strategy
+		(username, password, done) => {
+			let user = User.find(username, password);
+			done(false, user || false); // 1st argument = error, 2nd argument = user found?
+		}
+	));
+
+Étape 5 : quand une ressource (page HTML…) est demandée, utilisation d'un middleware d'authentification
+	.get(
+		'/secret',
+		passport.authenticationMiddleware(),
+		(req, res) => {
+			console.log("Should not see me unless logged in")
+			res.sendFile(__dirname + '/secret.html')
+		}
+	)
+
+Étape 6 : définition du middleware d'authentification
+	passport.authenticationMiddleware = () => {
+		return (req, res, next) => {
+			if (req.isAuthenticated()) {
+				console.info("Auth middleware : authorised :)")
+				return next()
+			}
+			console.error("Auth middleware : not auth!")
+			res.redirect('/login')
+		}
+	}
+	
+	
+Étape 7 : Serialize / deserialize, requis quand on utilise la méthode "session"
+	passport.serializeUser(function (user, done) {
+		console.log("serializeUser")
+		done(null, user.id);
+	});
+
+	passport.deserializeUser(function (id, done) {
+		/* MONGO
+		User.findById(id, function (err, user) {
+			console.log("deserialized user", user)
+			done(err, user);
+		});
+		*/
+		let user = User.findById(id)
+		console.log("deserialized user", user)
+		done(false, user || false)
+	});
+
+
+
+//====================================
+
+
+[Openstreetmap]
+ionic start --v2 ChristianStreetArt sidemenu
+npm install openlayers --save -> // Install openlayers as a node module:
+npm install @types/openlayers --save -> // Install typings for openlayers:
+npm install --save jquery
+npm install -D @types/jquery
+
+ionic platform add ios
+ionic platform add android
+ionic platform add wp8
+
+ionic build android
+ionic emulate android
+ionic run android
+
+
+ionic serve
+
+// Camera In An Ionic 2
+https://www.thepolyglotdeveloper.com/2016/04/use-the-device-camera-in-an-ionic-2-android-and-ios-app/
+http://blog.ionic.io/10-minutes-with-ionic-2-using-the-camera-with-ionic-native/
+
+// Geolocation
+http://www.joshmorony.com/ionic-2-how-to-use-google-maps-geolocation-video-tutorial/
+
+// Openlayer (openstreetmap)
+http://openlayers.org/en/latest/examples/index.html
+http://openlayers.org/en/latest/apidoc/ol.Feature.html
+http://dev.openlayers.org/docs/files/OpenLayers/Map-js.html
+
+
+
+// Dans tsconfig.json
+{
+   ...
+   "compilerOptions":{
+      ...
+      "types":["jquery"]
+      ...
+   }
+   ...
+}
+
+
+//Dans app.scss 
+@import "../../node_modules/openlayers/css/ol"; -> 
+
+
+// Dans la page.ts
+import { Component } from '@angular/core';
+import { NavController } from 'ionic-angular';
+import  ol  from 'openlayers';
+import * as $ from 'jquery';
+@Component({
+  selector: 'page-page1',
+  templateUrl: 'page1.html'
+})
+export class Page1 {
+
+  constructor(public navCtrl: NavController) {
+
+  }
+  ionViewDidLoad(){
+
+      var layer = new ol.layer.Tile({
+        source: new ol.source.OSM()
+      });
+
+      var map = new ol.Map({
+        layers: [layer],
+        target: 'map2',
+        view: new ol.View({
+          center: [0, 0],
+          zoom: 2
+        })
+      });
+
+	  
+	  
+      var pos = ol.proj.fromLonLat([16.3725, 48.208889]);
+
+      // Vienna marker
+      var marker = new ol.Overlay({
+        position: pos,
+        positioning: 'center-center',
+        element: document.getElementById('marker2'),
+        stopEvent: false
+      });
+      map.addOverlay(marker);
+
+      // Vienna label
+      var vienna = new ol.Overlay({
+        position: pos,
+        element: document.getElementById('vienna2')
+      });
+      map.addOverlay(vienna);
+	  
+	  
+	  
+	  
+	  
+	  
+      pos = ol.proj.fromLonLat([26.3725, 38.208889]);
+
+      // Vienna marker
+      var marker2 = new ol.Overlay({
+        position: pos,
+        positioning: 'center-center',
+        element: document.getElementById('marker'),
+        stopEvent: false
+      });
+      map.addOverlay(marker2);
+
+      // Vienna label
+      var vienna2 = new ol.Overlay({
+        position: pos,
+        element: document.getElementById('vienna')
+      });
+      map.addOverlay(vienna2);
+
+	  
+	  
+	  
+
+      // Popup showing the position the user clicked
+      var popup = new ol.Overlay({
+        element: document.getElementById('popup')
+      });
+      map.addOverlay(popup);
+	  /*
+      map.on('click', function(evt) {
+        var element = popup.getElement();
+        var coordinate = evt.coordinate;
+        var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
+            coordinate, 'EPSG:3857', 'EPSG:4326'));
+
+        $(element).popover('destroy');
+        popup.setPosition(coordinate);
+        // the keys are quoted to prevent renaming in ADVANCED mode.
+        $(element).popover({
+          'placement': 'top',
+          'animation': false,
+          'html': true,
+          'content': '<p>The location you clicked was:</p><code>' + hdms + '</code>'
+        });
+        $(element).popover('show');
+      });
+  */
+  
+  }
+
+  
+}
+
+
+
+
+
+
+// Dans la page.html
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Page One</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+	<h3>Ionic Menu Starter</h3>
+
+	<p>
+		If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will show you the way.
+	</p>
+
+	<button ion-button secondary menuToggle>Toggle Menu</button>
+
+	<div id="olmap" data-tap-disabled="true"></div>
+	
+	
+    <div id="map2" class="map"></div>
+    <div style="display: none;">
+      <!-- Clickable label for Vienna -->
+      <a class="overlay" id="vienna" target="_blank" href="http://en.wikipedia.org/wiki/Vienna">Vienna</a>
+      <div id="marker" title="Marker"></div>
+      <!-- Clickable label for Vienna -->
+      <a class="overlay" id="vienna2" target="_blank" href="http://en.wikipedia.org/wiki/Vienna">Vienna</a>
+      <div id="marker2" title="Marker"></div>
+      <!-- Popup -->
+      <div id="popup" title="Welcome to ol3"></div>
+    </div>
+	
+</ion-content>
+
+
+
+
+
+
+
+
+--------------
+
+I have had some success with OL3 in Ionic2 RC1.
+
+First download OL3: https://openlayers.org/download/7
+Add the ol.css and ol.js to your src/assets folder
+In your index.html add the following:
+In the head: 
+In the body:
+
+Create a new page:
+ionic g page StreetMap
+
+In app.module.ts add:
+import { StreetMap } from '../pages/street-map/street-map';
+Add StreetMap to your @NgModule declarations and entryComponents
+
+In app.component.ts add:
+import { StreetMap } from '../pages/street-map/street-map';
+Add it to your list of pages if you are using SideMenu template.
+
+In your street-map.html, add to your :
+<div id="map" #map class="map">
+
+Now the fun, in your street-map.ts:
+
+import { Component, ViewChild, Renderer } from '@angular/core';
+import { Platform } from 'ionic-angular';
+declare var ol: any;
+declare var view: any;
+@Component({
+  selector: 'page-street-map',
+  templateUrl: 'street-map.html'
+})
+export class StreetMap {
+  @ViewChild('map') map;
+  constructor(platform: Platform, public renderer: Renderer) {
+    platform.ready().then(() => {
+      console.log("Platform is ready");
+      this.loadMap();
+    })
+  }
+
+  loadMap() {
+    console.log('Hello StreetMap Page');
+    var vectorSource = new ol.source.Vector({
+    });
+
+    for (var i = 0; i < 50; i++) {
+      var iconFeature = new ol.Feature({
+        geometry: new
+          ol.geom.Point(ol.proj.transform([Math.random() * 360 - 180, Math.random() * 180 - 90], 'EPSG:4326', 'EPSG:3857')),
+        name: 'Null Island ' + i,
+        population: 4000,
+        rainfall: 500
+      });
+      vectorSource.addFeature(iconFeature);
+    }
+
+    var iconStyle = new ol.style.Style({
+      image: new ol.style.Icon(/** @type {olx.style.IconOptions} */({
+        anchor: [0.5, 46],
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'pixels',
+        opacity: 0.75,
+        src: 'http://openlayers.org/en/v3.9.0/examples/data/icon.png'
+      }))
+    });
+
+    var vectorLayer = new ol.layer.Vector({
+      source: vectorSource,
+      style: iconStyle
+    });
+
+    var map = new ol.Map({
+      layers: [new ol.layer.Tile({ source: new ol.source.OSM() }), vectorLayer],
+      target: document.getElementById('map'),
+      view: new ol.View({
+        center: ol.proj.transform([-0.12755, 51.507222], 'EPSG:4326', 'EPSG:3857'),
+        zoom: 3
+      })
+    });
+  }
+}
+This includes the example of loading 50 random location.
+Good luck!
+
+

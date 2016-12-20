@@ -1,0 +1,723 @@
+
+
+127.0.0.1:8080/products
+
+[Editeurs]
+visual studio code (sous mac)
+webstorm 
+Eclipse
+Atom
+Sublim
+code.visualstudio.com
+
+Tester typeScript
+typescriptlang.org/play/
+
+git clone http-...
+
+npm
+www.npmjs.com
+
+là ou se trouve package.json lancer npm install
+
+npm install
+npm start
+
+git co master
+
+
+
+
+package.json 
+
+
+www.angular.io
+
+github.com/angular/quickstart
+
+github.com/angular/angular-cli
+
+cli.angular.io
+
+
+github.com/firehist/angular2-courses
+
+
+
+____
+
+github.com/angular/quickstart
+npm install
+npm start
+
+____
+
+
+Un composant à rajouter à chrome 
+augury.angluar.io 
+et
+batscanner
+
+
+__________
+
+
+installer node
+
+nodejs.org
+ou
+nvm (voir sur github)
+
+nvm install 6
+(6 c'est la version de node)
+
+Pour savoir les version de node installés
+nvm list 
+ou pour savoir la currente version
+nvm -v
+nvm use v4
+
+___________
+
+
+
+
+
+=============================================================================================================================================================================================================================
+
+
+
+Mardi 1 nov 2016
+
+www.npmjs.com/^angular
+
+
+=============================================================================================================================================================================================================================
+
+POUR INSTALLER [(ngModel)]
+
+// on sauvegarde d'abord le projet
+npm install --save @angular/forms
+
+ensuite importer FormsModule
+import { FormsModule } from '@angular/forms';
+
+editer: system.config.js
+et dessous:
+      '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
+ajouter:
+      '@angular/forms': 'npm:@angular/forms/bundles/forms.umd.js',
+
+=============================================================================================================================================================================================================================
+
+[IONIC]
+http://ionicframework.com/
+	  
+	  
+	  
+	  
+=============================================================================================================================================================================================================================
+	 
+// s'il y a un prob
+npm run tsc
+	  
+=============================================================================================================================================================================================================================
+
+//créer un type (fichier 1)
+export interface IProduct {
+	name: string;
+}
+
+//utiliser le type (fichier2)
+import {IProduct} from './product'
+export class MaClass implements IProduct {
+	data: Array<IProduct>
+}
+
+_____________________________________
+
+
+PIPES CUSTOM (pour le filtrage)
+créer un fichier dont le nom fini par ".pipe.ts"
+
+import { Pipe, PipeTransform }    from '@angular/core';
+@Pipe({
+	name: "prodFiltre"
+})
+export class ProdFilterPipe implements PipeTransform{
+	transform(uneTable: any[], filterBy: string){
+		return uneTable.filter((p)=> p.name == filterBy);
+	}
+}
+
+// use
+<h1>ngFor</h1>
+<ul>
+	<li *ngFor="let d of data | prodFilter:'unFiltre'">
+		{{d}}
+	</li>
+</ul>
+
+======================
+
+Documente toi sur CommonJS et AMD requirejs.org/docs/whyamd.html#commonjs
+
+
+==========================
+
+module.id (sert à savoir sur quel composant on se base pour faire ensuite les chemins des autres fichiers à inclure (genre le <base> en html)
+
+
+prof@nomades.ch
+
+_____________________________________
+
+chercher la documentation au sujet de "Bootstrap angular 2"
+
+
+______________
+
+
+Les services portent à la fin comme nom ".service.ts"
+
+
+DEVOIRS
+faire un service , composant étoile et filter
+
+(voir la section ressources dans github/firehist)
+________________________________________________
+
+L'observable
+
+// Pour comprendre les observables
+http://reactivex.io/documentation/observable.html
+http://rxmarbles.com
+
+
+on utilise un observable quand on ne sait pas quand ca va arriver
+un observable recois plusieurs valeurs par plusieurs events, et le promise par plusieurs promise.
+Si personne n'écoute l'événement, alors l'évenement ne sera pas exécuté.
+L'observable peut-être arrêté mais pas le promise.
+
+L'Observable et PIPE
+si on ajoute comme pipe un "async", alors on a pas besoin de faire un subscribe 
+pour afficher un observable, il fait la conversion automatiquement.
+
+<app-list [items]="items | async"></app-list>
+
+
+==================================
+
+//JSON en Ajax (utilisation d'observable)
+
+//Le serveur json sera dispo sur 
+http://localhost:3000
+
+package.json > voir "api":"json-server --watch ..."
+package.json > rajouter une data en frère du tableau d'object "products" qui s'appellera "user"
+
+//Si @angular/http n'est pas disponible pour un import:
+npm install --save @angular/http
+
+puis ajouter dans systemjs.config.js la ligne suivante:
+'@angular/http': 'npm:@angular/http/bundles/http.umd.js',
+
+Ajouter ceci dans app.module.ts
+import { HttpModule } from '@angular/http';
+@NgModule({
+  imports: [
+    HttpModule,
+	...
+  ],
+	...
+})
+
+
+
+//====== Dans product.service.ts ===========
+import { Injectable } from '@angular/core';
+import { Http, Response } from '@angular/http';
+
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
+
+import { IProduct } from './product';
+
+@Injectable()
+export class ProductService {
+    private _productUrl = 'api/products/products.json';
+
+    constructor(private _http: Http) { }
+
+    getProducts(): Observable<IProduct[]> {
+        return this._http.get(this._productUrl)
+            .map((response: Response) => <IProduct[]> response.json().products)
+            .do(data => console.log('All: ' +  JSON.stringify(data)))
+            .catch(this.handleError);
+    }
+
+    getProduct(id: number): Observable<IProduct> {
+        return this.getProducts()
+            .map((products: IProduct[]) => products.find(p => p.id === id));
+    }
+
+    private handleError(error: Response) {
+        // in a real world app, we may send the server to some remote logging infrastructure
+        // instead of just logging it to the console
+        console.error(error);
+        return Observable.throw(error.json().error || 'Server error');
+    }
+}
+
+//====== Dans product-list.component.ts ===========
+
+
+ngOnInit(): void {
+	this._productService.getProducts().subscribe(
+		products => this.products = products,
+		error => this.errorMessage = <any>error
+	);
+}
+
+//==================================================================
+//==================================================================
+
+// LE ROUTING
+
+//Si router n'est pas installé
+npm install --save @angular/router
+
+// Dans systemjs.config.js
+    map: {
+		...
+      '@angular/router': 'npm:@angular/router/bundles/router.umd.js',
+		...
+	},
+
+// Dans index.html, ajouter:
+<base href="/">
+	
+// Dans app.module.ts
+import { RouterModule} from '@angular/router';
+
+@NgModule({
+  imports: [
+    ...
+    HttpModule,
+    RouterModule.forRoot([ // Noter que c'est forRoot (pour la navigation principale)
+      { path: '', redirectTo: 'Welcome', pathMatch: 'full'}, // Redirection
+      { path: 'products', component: ProductListComponent }, // http://.../products
+      { path: 'welcome', component: WelcomeComponent },
+      { path: '', redirectTo: 'welcome', pathMatch: 'full' },
+      { path: '**', redirectTo: 'welcome', pathMatch: 'full' }
+    ]),
+    //], useHash = true),
+    ...
+  ],
+  ...
+})
+
+//Dans product.module.ts
+import { RouterModule} from '@angular/router';
+@NgModule({
+  imports: [
+    ...
+    HttpModule,
+    RouterModule.forChild([ // forChild pour le sous menu
+      { path: 'products', component: ProductListComponent },
+      { path: 'product/:id', // le:id veut dire que c'est un paramètre (variable)
+        canActivate: [ ProductDetailGuard],
+        component: ProductDetailComponent
+      }
+    ]),
+    ...
+  ],
+  ...
+})
+
+// Dans app.components.ts
+import { Component } from '@angular/core';
+@Component({
+    selector: 'nat-app',
+    template: `
+    <div>
+        <nav class='navbar navbar-default'>
+            <div class='container-fluid'>
+                <a class='navbar-brand'>{{pageTitle}}</a>
+                <ul class='nav navbar-nav'>
+                    <li><a [routerLink]="['/welcome']">Home</a></li>
+                    <li><a [routerLink]="['/products']">Product List</a></li>
+					<li><a [routerLink]="['/products', 1]">Product 1</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class='container'>
+            <router-outlet></router-outlet>
+        </div>
+     </div>
+     `
+})
+
+
+// ==========================================
+
+Exercices 9 et 10
+
+// ==========================================
+
+Voir les tutoriels et dessins de 
+Victor Savkin
+qui est un des modeslisateur d'angular 
+
+// ==========================================
+
+GUARDS
+[Router] CanActivate 
+
+// Dans product-guard.service.ts
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
+
+@Injectable()
+export class ProductDetailGuard implements CanActivate {
+
+    constructor(private _router: Router) {
+    }
+
+    canActivate(route: ActivatedRouteSnapshot): boolean {
+        let id = +route.url[1].path;
+        if (isNaN(id) || id < 1) {
+            alert('Invalid product Id');
+            // start a new navigation to redirect to list page
+            this._router.navigate(['/products']);
+            // abort current navigation
+            return false;
+        };
+        return true;
+    }
+}
+
+// Dans product.module.ts (voir ProductDetailGuard et canActivate)
+import { NgModule } from '@angular/core';
+import { RouterModule} from '@angular/router';
+
+import { ProductListComponent } from './product-list.component';
+import { ProductDetailComponent } from './product-detail.component';
+import { ProductDetailGuard } from './product-guard.service';
+
+import { ProductFilterPipe } from './product-filter.pipe';
+import { ProductService } from './product.service';
+
+import { SharedModule } from '../shared/shared.module';
+
+@NgModule({
+  imports: [
+    SharedModule,
+    RouterModule.forChild([
+      { path: 'products', component: ProductListComponent },
+      { path: 'product/:id',
+        canActivate: [ ProductDetailGuard], // sert à la validation (si on peut aller ou pas sur cette page)
+        component: ProductDetailComponent
+      }
+    ])
+  ],
+  declarations: [
+    ProductListComponent,
+    ProductDetailComponent,
+    ProductFilterPipe
+  ],
+  providers: [
+    ProductService,
+    ProductDetailGuard
+  ]
+})
+export class ProductModule {}
+
+
+// ===============================
+
+
+en devoir voir les GUARDS et jouer avec les routeurs et les modules.
+ 
+
+// =============================
+ [GIT]
+ 
+ git add 
+ git commit
+ git commit amend (ou append)
+ git rebase 5 (pour les 5 derniers rebase)
+ git push
+ git reset --hard HEAD
+ 
+ 
+// Création d'un module
+
+=====================
+
+
+Explication des fichiers racine
+
+[package.json]
+comporte toutes les versions de tous les modules.
+le fait d'écrire un "^" devant les version signifie qu'on prendra toutes les autres versions supérieurs (mimeurs). 
+Exemple: ^1.2.3 := 1.2.3 jusqu'à avant 2.0.0
+
+dependecies
+toutes les dépendances de notre application
+(va en production)
+npm --save
+
+devDependecies
+On met tous les paquets qui concerne le developpement. Exemple: le testing (le build), TypeScript, Tslint, json server, 
+(reste en dev)
+npm --save-dev
+
+Dans package.json dans la section "scripts", tout ce qu'on installe dans scripts se trouve dans le dossier ".bin" de node_modules
+Pour tester l'un de ces scripts, on lance "npm run nomDuScript"
+
+Si on lance la commande "npm init" dans un dossier vide et qu'on répond aux questions, il va créer un package.json basique avec les réponses aux questions.
+
+
+[gitignore]
+on y indique chaque élément à ignorer par GIT
+
+
+[systemjs.config.js]
+Il y a un site web pour écrire cette config.
+C'est là qu'on indique le chemin du dossier node_modules.
+C'est là qu'on créer les alias qui pointent sur les packages
+C'est là qu'on indique le fichier JS principal de notre application
+
+[tsconfig.json]
+Définit les options du compilateur TypeScript
+
+[tslint.json]
+Définit la configuration de la syntaxe javascript
+
+[Pour commencer un projet avec tout déjà installé]
+http://github.com/chrisdwheatley/generator-angular2
+
+[Yeoman]
+Un générateur 
+http://yeoman.io
+fait presque la même chose que angularCLi
+npm install -g yo
+
+[angularCLi]
+https://cli.angular.io/
+	npm install -g angular-cli // a executer qu'une seule fois
+	my-dream-app // va créer un nouveau dossier (et copie à l'intérieur toute l'application)
+	ng new myApp --link-cli // si la commande normale "ng new my-dream-app" ne fonctionne pas alors utiliser cette ligne)
+	
+	// ou
+	npm install hammerjs --save
+	npm install @types/hammerjs --save-dev
+	
+	// ou
+	npm install --global --production windows-build-tools
+	
+	cd my-dream-app
+	ng serve // équivaut au "npm start" avec plus d'élaboration
+
+	ng generate // permet d'ajouter des composants (pipe, route, etc.)
+	Voir aussi ng-europe sur Youtube
+	
+// =========================================================================================
+[NG]
+https://cli.angular.io/reference.pdf
+
+--dry-run (pour voir ce qu'il va faire mais n'installe rien)
+
+ng completion (pour qu'on appuie tab on a les commandes qui apparaitront)
+
+ng format (arrange le code)
+
+ng e2e (signifie end2end. Permet de simuler un utilisateur afin de simuler des tests)
+
+ng github-pages:deploy (si on push le site sur une branche dont le nom commnce par #, alors on peut faire héberger notre application gratuitement sur github. Du coup cette commande permet de faire ça. Sur le site on aura un prefix de gh-pages)
+
+ng lint
+ng test (permet de faire des tests unitaires)
+
+ng generate (
+	"ng g component" ou "ng generate component" genere un composant dans le chemin indiqué.
+)	
+
+	
+
+
+	
+// ================================================
+https://github.com/angular/angular-cli
+	Exemple pour mettre en production avec NG
+	ng build --target=production --environment=prod
+
+	Le cli gère aussi le AoT (qui est un optimiseur de code en supprimant ce qui n'est pas utilisé)
+	
+Les polyfills (fait la conversion avec les anciennes version de JS)
+
+
+
+ create .editorconfig
+ create README.md
+ create src\app\app.component.css
+ create src\app\app.component.html
+ create src\app\app.component.spec.ts
+ create src\app\app.component.ts
+ create src\app\app.module.ts
+ create src\app\index.ts
+ create src\assets\.gitkeep
+ create src\environments\environment.
+ create src\environments\environment.
+ create src\favicon.ico
+ create src\index.html
+ create src\main.ts
+ create src\polyfills.ts
+ create src\styles.css
+ create src\test.ts
+ create src\tsconfig.json
+ create src\typings.d.ts
+ create angular-cli.json
+ create e2e\app.e2e-spec.ts (pour les tests unitaires)
+ create e2e\app.po.ts
+ create e2e\tsconfig.json
+ create .gitignore
+ create karma.conf.js
+ create package.json
+ create protractor.conf.js (pour les tests unitaires mais différent de e2e)
+ create tslint.json
+ 
+ 
+ 
+ =================
+ 
+ 
+ [sites]
+ nodejs express
+ hapijs.com
+ swagger.io (en fonction des routes déclarés, il va générer la documentation)$
+ cheatography.com -> met a dispo des commandes pour faire des designs
+ 
+ [CSS]
+ foundation.zurb.com
+ materialize
+ bootstrap
+ stylus-lang.com
+ MATERIAL DESIGN -> https://github.com/angular/material2
+ 
+ [travis.yml]
+ En mettant un travis.yml à la racine du site (configué), à chaque commit, travis va effectuer des tests.
+ Travis est installé sur github et tourne là bas.
+ 
+
+ 
+ [GIT]
+ drone.io -> un git publique
+ 
+ [pour tester les applications]
+ <<travis>>
+ =================
+ 
+ [JQUERY]
+
+STEP 1
+// In the console
+// First install jQuery
+npm install --save jquery
+// and jQuery Definition
+npm install -D @types/jquery
+
+
+STEP 2
+// Next, within tsconfig.json
+// "types" is helpful if we have "node_modules" in our "exclude" property
+// to avoid too many ".ts" files which slows down processing.  It allows
+// us to specifically configure which "types" we want in our app
+{
+   ...
+   "compilerOptions":{
+      ...
+      "types":["jquery"]
+      ...
+   }
+   ...
+}
+
+STEP 3
+// Now, within any of the app files
+import * as $ from 'jquery';
+//
+$('#elemId').width();
+
+
+ =================
+
+†
+†
+†
+†
+†
+†
+†
+†
+†
+†
+†
+†
+†
+†
+†
+
+==========================
+
+[TESTING]
+
+	Mock
+	Faire un mock c'est tester les choses "hors-ligne"
+	Ainsi le test rentre dans une boite, on sait ce qu'il doit retourner.
+
+
+	 
+
+	 
+	les test unitaires -> pour tester une ligne précise
+	les test fonctionnel (ou d'intégration) -> simule un vrai browser avec des clicks et tout. 
+											Le mock sera différent.
+
+	[les test unitaires]
+	Dans angular.io il y a un menu Testing (sur le menu gauche)
+
+	[jasmin]
+	jasmin test -> jasmine.github.io
+
+	// le premier paramètre est une description de ce qu'on veut tester
+	describe("A suite is just a function", function() {
+		var a;
+		// Le premier paramètre est une description du test
+		it("and so is a spec", function() {
+			a = true; 
+			// A doit être égale à true
+			expect(a).toBe(true); 
+		});
+	});
+	
+	// D'autres exemples ici 
+	https://jasmine.github.io/2.5/introduction
+	
+	
+	les test s'appellent ".spec.ts"
+	
+	pour lancer les tests on utilise soit
+	-Karma -> il run le test dans un browser (fantom JS ou Kasper JS simulent un navigateur, c'est là où d'habitude on lance les tests unitaires)
+	-Protractor
+	
+	
+	jasmin pour écrire les test, et karma pour les lancer.
+	
+	le module @angular/core/testing
+	
+	
+	

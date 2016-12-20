@@ -1,0 +1,38 @@
+
+
+
+
+ionic g page nomdepage
+ionic g component nomducomposant
+ionic g provider nomdeclass
+ionic g tabs myTabs
+
+
+ionic start myprojet tabs --lab
+ionic start hello blank --v2
+
+ionic plugin add cordova-plugin-contacts
+ionic build
+ionic build android
+ionic run android
+ionic emulate android
+
+ionic upload
+ionic serve
+ionic generate --list
+
+ionic lab -> pour build une interface avec des drag&drop
+	
+ionic platform add ios
+ionic platform add android
+ionic platform add wp8
+ionic emulate android
+
+ionic help 
+
+
+// pour résoudre 
+ionic plugin add cordova-plugin-whitelist --save
+
+in config.xml:
+<allow-navigation href="http://*/*" />
