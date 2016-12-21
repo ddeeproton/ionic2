@@ -36,3 +36,7 @@ ionic plugin add cordova-plugin-whitelist --save
 
 in config.xml:
 <allow-navigation href="http://*/*" />
+
+
+ionic plugin add https://github.com/Telerik-Verified-Plugins/ImagePicker
+
