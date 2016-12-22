@@ -5,6 +5,7 @@ import { Page1 } from '../pages/page1/page1';
 import { Page2 } from '../pages/page2/page2';
 import { GalleryPage } from '../pages/gallery/gallery';
 import { CameraPage } from '../pages/camera/camera';
+import { WelcomePage } from '../pages/welcome/welcome';
 
 @NgModule({
   declarations: [
@@ -12,7 +13,8 @@ import { CameraPage } from '../pages/camera/camera';
     Page1,
     Page2,
 	GalleryPage,
-	CameraPage
+	CameraPage,
+	WelcomePage
   ],
   imports: [
     IonicModule.forRoot(MyApp)
@@ -23,7 +25,8 @@ import { CameraPage } from '../pages/camera/camera';
     Page1,
     Page2,
 	GalleryPage,
-	CameraPage
+	CameraPage,
+	WelcomePage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
 })

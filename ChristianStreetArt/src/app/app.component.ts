@@ -6,6 +6,7 @@ import { Page1 } from '../pages/page1/page1';
 import { Page2 } from '../pages/page2/page2';
 import { GalleryPage } from '../pages/gallery/gallery';
 import { CameraPage } from '../pages/camera/camera';
+import { WelcomePage } from '../pages/welcome/welcome';
 
 
 @Component({
@@ -14,7 +15,7 @@ import { CameraPage } from '../pages/camera/camera';
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = GalleryPage;
+  rootPage: any = WelcomePage;
 
   pages: Array<{title: string, component: any}>;
 

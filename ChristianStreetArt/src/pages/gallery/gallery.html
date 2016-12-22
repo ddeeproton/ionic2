@@ -18,8 +18,10 @@
 	<ion-list>
 	  <ion-item-group>
 		<ion-item *ngFor="let item of items">
-			{{ item }}
-			<ion-img style="width: 80px; height: 80px;" src="https://manuebr.files.wordpress.com/2013/12/1524824_1437260766488596_1114284628_n.jpg"></ion-img>
+			<a (click)="map(item)">
+				{{ item }}
+				<ion-img style="width: 80px; height: 80px;" src="https://manuebr.files.wordpress.com/2013/12/1524824_1437260766488596_1114284628_n.jpg"></ion-img>
+			</a>
 		</ion-item>
 	  </ion-item-group>
 	</ion-list>
