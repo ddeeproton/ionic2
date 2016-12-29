@@ -1,0 +1,1 @@
+npm install body-parser mongoose express express-session passport passport-local
